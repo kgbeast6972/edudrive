@@ -3,1007 +3,630 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduDrive School Hub — 12th Grade Drive & Subject Channels</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>12th Grade Study Hub</title>
   <style>
+    /* ---------------------------------------------------------
+       100% SELF-CONTAINED EMBEDDED CSS (ZERO EXTERNAL CDNs)
+       --------------------------------------------------------- */
     :root {
-      --bg-app: #090d16;
-      --bg-panel: #0f172a;
-      --bg-card: #111827;
-      --bg-elevated: #1e293b;
-      --bg-input: #0b1120;
+      --bg-page: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #162032;
+      --bg-hover: #27354f;
+      --bg-input: #0f172a;
+      --border: #2c3b55;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --border-subtle: #1e293b;
-      --border-strong: #334155;
       --accent: #3b82f6;
       --accent-hover: #2563eb;
       --accent-soft: rgba(59, 130, 246, 0.16);
-      --emerald: #10b981;
-      --emerald-soft: rgba(16, 185, 129, 0.14);
-      --amber: #f59e0b;
-      --rose: #f43f5e;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.16);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
     }
 
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
-      background-color: var(--bg-app);
+      min-height: 100%;
+      background-color: var(--bg-page);
       color: var(--text-main);
-      font-family: var(--font-sans);
-      font-size: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.5;
-      overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    button, input, textarea, select {
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
       font-family: inherit;
       color: inherit;
     }
 
     button {
       cursor: pointer;
-      border: none;
-      background: transparent;
     }
 
-    .app-shell {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Sidebar styled after subject folder list */
-    .sidebar {
-      width: 272px;
-      flex-shrink: 0;
-      background-color: var(--bg-panel);
-      border-right: 1px solid var(--border-subtle);
+    /* Layout Container */
+    .page-shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      z-index: 40;
-      transition: transform 0.2s ease;
     }
 
-    .sidebar-header {
-      padding: 16px;
-      border-bottom: 1px solid var(--border-subtle);
+    /* Top Header */
+    .top-header {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 16px;
     }
 
     .brand-title {
-      font-size: 15px;
+      margin: 0;
+      font-size: 1.35rem;
       font-weight: 700;
       letter-spacing: -0.01em;
-      margin: 0;
     }
 
-    .brand-sub {
-      font-size: 11px;
+    .brand-subtitle {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin: 2px 0 0;
-    }
-
-    .grade-banner {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border-subtle);
-      background-color: rgba(15, 23, 42, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .grade-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #93c5fd;
-      background-color: var(--accent-soft);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-
-    .folder-nav {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 0;
-    }
-
-    .folder-section-label {
-      padding: 8px 16px 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .folder-item {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 13px 16px;
-      text-align: left;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      color: var(--text-main);
-      border-bottom: 1px solid rgba(30, 41, 59, 0.65);
-      transition: background-color 0.15s ease, color 0.15s ease;
-    }
-
-    .folder-item:hover {
-      background-color: rgba(30, 41, 59, 0.75);
-    }
-
-    .folder-item.active {
-      background-color: #0b4a7a;
-      color: #ffffff;
-      box-shadow: inset 3px 0 0 #38bdf8;
-    }
-
-    .folder-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .folder-icon {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      color: #cbd5e1;
-    }
-
-    .folder-item.active .folder-icon {
-      color: #e0f2fe;
-    }
-
-    .folder-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background-color: var(--bg-elevated);
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .folder-item.active .folder-badge {
-      background-color: rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-    }
-
-    .sidebar-footer {
-      padding: 12px 14px;
-      border-top: 1px solid var(--border-subtle);
-      background-color: var(--bg-card);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .drive-link-box {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      word-break: break-all;
-    }
-
-    /* Main Workspace */
-    .main-area {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--bg-app);
-    }
-
-    .top-header {
-      min-height: 64px;
-      padding: 10px 18px;
-      background-color: var(--bg-panel);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .header-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-sub {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 560px;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .btn {
+    .btn-drive-top {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.15s ease;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background-color: var(--accent);
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background: var(--success);
       color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      transition: transform 0.12s ease, filter 0.15s ease;
     }
 
-    .btn-primary:hover {
-      background-color: var(--accent-hover);
+    .btn-drive-top:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
     }
 
-    .btn-drive {
-      background-color: var(--emerald-soft);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-    }
-
-    .btn-drive:hover {
-      background-color: rgba(16, 185, 129, 0.24);
-    }
-
-    .btn-secondary {
-      background-color: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-strong);
-    }
-
-    .btn-secondary:hover {
-      background-color: #293548;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--amber);
-      flex-shrink: 0;
-    }
-
-    .status-dot.connected {
-      background-color: var(--emerald);
-    }
-
-    /* Subject Tabs Bar */
-    .subject-tabs-bar {
-      padding: 8px 18px;
-      background-color: #0c1322;
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
+    .btn-refresh {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      overflow-x: auto;
-      scrollbar-width: thin;
+      padding: 12px 15px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.15s ease;
+    }
+
+    .btn-refresh:hover {
+      background: var(--bg-hover);
+    }
+
+    /* 7 Subject Tabs */
+    .subject-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      margin-bottom: 18px;
     }
 
     .subject-tab {
-      padding: 7px 13px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
+      padding: 13px 10px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
       font-weight: 700;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      white-space: nowrap;
-      transition: all 0.15s ease;
+      letter-spacing: 0.03em;
+      text-align: center;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
     .subject-tab:hover {
-      color: var(--text-main);
-      border-color: var(--border-strong);
+      background: var(--bg-hover);
+      border-color: var(--border);
     }
 
     .subject-tab.active {
-      background-color: #0b4a7a;
+      background: var(--accent);
       color: #ffffff;
-      border-color: #38bdf8;
+      border-color: var(--accent);
     }
 
-    /* Toolbar: Search & Folder Filter */
-    .toolbar {
-      padding: 10px 18px;
-      background-color: rgba(15, 23, 42, 0.85);
-      border-bottom: 1px solid var(--border-subtle);
+    /* Status Notice Bar (only shown when helpful) */
+    .status-banner {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .status-banner.visible {
+      display: block;
+    }
+
+    .status-banner.error {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      background: rgba(127, 29, 29, 0.25);
+    }
+
+    /* Items List */
+    .items-list {
       display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .file-card {
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      transition: border-color 0.15s ease;
+    }
+
+    .file-card:hover {
+      border-color: #475569;
+    }
+
+    .file-meta {
+      flex: 1 1 280px;
+      min-width: 0;
+    }
+
+    .file-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .file-sub {
+      margin-top: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .type-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #93c5fd;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .search-box {
-      position: relative;
-      flex: 1;
-      min-width: 210px;
-      max-width: 360px;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-strong);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: var(--accent);
-    }
-
-    .toolbar-meta {
-      display: flex;
+    .btn-view {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      min-width: 112px;
+      transition: background 0.15s ease;
     }
 
-    /* Stream / Feed Area */
-    .feed-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px;
-      position: relative;
+    .btn-view:hover {
+      background: var(--accent-hover);
     }
 
-    .feed-inner {
-      max-width: 880px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-width: 116px;
+      transition: background 0.15s ease;
     }
 
+    .btn-download:hover {
+      background: var(--bg-hover);
+    }
+
+    /* Clean Empty State */
     .empty-state {
       text-align: center;
-      padding: 56px 24px;
-      background-color: var(--bg-card);
-      border: 1px dashed var(--border-strong);
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
       border-radius: var(--radius-lg);
+      padding: 48px 20px;
+      color: var(--text-muted);
     }
 
     .empty-title {
-      font-size: 15px;
-      font-weight: 700;
       margin: 0 0 6px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
 
     .empty-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      max-width: 460px;
-      margin: 0 auto;
-    }
-
-    .post-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .post-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .post-author-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-sm);
-      background-color: var(--accent-soft);
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .post-author {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .post-time {
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-
-    .post-text {
       margin: 0;
-      font-size: 14px;
-      color: var(--text-main);
-      white-space: pre-wrap;
-      word-break: break-word;
+      font-size: 0.92rem;
     }
 
-    .attachments-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .attachment-card {
-      background-color: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .attachment-media {
-      height: 150px;
-      width: 100%;
-      background-color: #050811;
+    /* Subtle Footer with Discreet Admin / Setup Link */
+    .page-footer {
+      margin-top: 32px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(44, 59, 85, 0.55);
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      overflow: hidden;
-    }
-
-    .attachment-media img,
-    .attachment-media video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .attachment-body {
-      padding: 10px 12px;
-      display: flex;
-      align-items: flex-start;
       justify-content: space-between;
-      gap: 8px;
-    }
-
-    .attachment-name {
-      font-size: 12px;
-      font-weight: 600;
-      word-break: break-word;
-    }
-
-    .attachment-meta {
-      font-size: 11px;
+      gap: 12px;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-top: 2px;
-      font-family: var(--font-mono);
     }
 
-    .type-tag {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 6px;
-      background-color: var(--bg-elevated);
-      color: #cbd5e1;
-      flex-shrink: 0;
+    .admin-link {
+      background: none;
+      border: none;
+      padding: 4px 6px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      opacity: 0.75;
     }
 
-    .attachment-actions {
-      padding: 0 12px 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .admin-link:hover {
+      opacity: 1;
+      color: var(--text-main);
     }
 
-    /* Composer */
-    .composer-wrap {
-      padding: 12px 18px 16px;
-      background-color: var(--bg-panel);
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .composer-inner {
-      max-width: 880px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .staged-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .staged-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
-      background-color: var(--accent-soft);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      font-size: 12px;
-    }
-
-    .composer-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-    }
-
-    .composer-textarea {
-      flex: 1;
-      min-height: 42px;
-      max-height: 140px;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-strong);
-      font-size: 13px;
-      resize: none;
-      outline: none;
-    }
-
-    .composer-textarea:focus {
-      border-color: var(--accent);
-    }
-
-    /* Drag & Drop Overlay */
-    .drop-overlay {
-      position: fixed;
-      inset: 16px;
-      z-index: 35;
-      background-color: rgba(37, 99, 235, 0.16);
-      border: 2px dashed #60a5fa;
-      border-radius: var(--radius-lg);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      backdrop-filter: blur(2px);
-    }
-
-    .drop-overlay.visible {
-      display: flex;
-    }
-
-    .drop-card {
-      background-color: var(--bg-panel);
-      border: 1px solid var(--border-strong);
-      padding: 20px 28px;
-      border-radius: var(--radius-lg);
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-    }
-
-    /* Modal & Lightbox */
+    /* Modals (Preview & Admin Setup) */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 60;
-      background-color: rgba(2, 6, 23, 0.78);
+      background: rgba(2, 6, 23, 0.82);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      overflow-y: auto;
+      z-index: 100;
     }
 
     .modal-backdrop.open {
       display: flex;
     }
 
-    .modal-card {
+    .modal-box {
       width: 100%;
-      max-width: 540px;
-      background-color: var(--bg-panel);
-      border: 1px solid var(--border-strong);
+      max-width: 860px;
+      max-height: 90vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
-      max-height: 90vh;
-      overflow-y: auto;
+      overflow: hidden;
+    }
+
+    .modal-box.small-modal {
+      max-width: 520px;
     }
 
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
     }
 
     .modal-title {
       margin: 0;
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 700;
+      word-break: break-word;
     }
 
-    .field-group {
+    .modal-header-right {
       display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .field-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .field-input {
-      width: 100%;
-      padding: 9px 12px;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-strong);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .field-input:focus {
-      border-color: var(--accent);
-    }
-
-    .help-box {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .help-box ol {
-      margin: 6px 0 0;
-      padding-left: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    /* Toast */
-    .toast-container {
-      position: fixed;
-      bottom: 84px;
-      right: 18px;
-      z-index: 80;
-      display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 8px;
-      pointer-events: none;
+      flex-shrink: 0;
     }
 
-    .toast-item {
-      background-color: var(--bg-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-strong);
-      padding: 10px 14px;
+    .btn-close {
+      padding: 8px 13px;
       border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .toast-item.error {
-      border-color: var(--rose);
-      color: #fecdd3;
-    }
-
-    .mobile-menu-btn {
-      display: none;
-      padding: 6px 10px;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-elevated);
-      border: 1px solid var(--border-strong);
-      font-size: 13px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
       font-weight: 700;
+      font-size: 0.88rem;
     }
 
-    .mobile-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background-color: rgba(2, 6, 23, 0.65);
-      z-index: 30;
+    .btn-close:hover {
+      background: var(--bg-hover);
     }
 
-    .mobile-backdrop.open {
+    .modal-body {
+      padding: 18px;
+      overflow: auto;
+      flex: 1;
+    }
+
+    .preview-image {
       display: block;
+      max-width: 100%;
+      max-height: 72vh;
+      margin: 0 auto;
+      border-radius: var(--radius-md);
     }
 
-    @media (max-width: 900px) {
-      .mobile-menu-btn {
-        display: inline-flex;
+    .preview-video {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      border-radius: var(--radius-md);
+      background: #000000;
+    }
+
+    .preview-frame {
+      width: 100%;
+      height: 70vh;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+    }
+
+    .preview-fallback {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-muted);
+    }
+
+    /* Admin Form Controls */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .form-hint {
+      margin-top: 5px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-save {
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .btn-save:hover {
+      background: var(--accent-hover);
+    }
+
+    @media (max-width: 600px) {
+      .subject-tabs {
+        grid-template-columns: repeat(2, 1fr);
       }
 
-      .sidebar {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        transform: translateX(-100%);
+      .file-actions {
+        width: 100%;
       }
 
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .header-sub {
-        max-width: 240px;
+      .btn-view,
+      .btn-download {
+        flex: 1;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <div id="mobileBackdrop" class="mobile-backdrop" onclick="toggleSidebar(false)"></div>
-
-    <!-- Left Sidebar: Exact Subject Folders for 12th Grade -->
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-header">
-        <div>
-          <h1 class="brand-title">EduDrive School Hub</h1>
-          <p class="brand-sub">School Replacement • Drive Sync</p>
-        </div>
-        <button class="mobile-menu-btn" onclick="toggleSidebar(false)" aria-label="Close sidebar">&times;</button>
+  <div class="page-shell">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div>
+        <h1 class="brand-title" dir="auto">12th Grade Study Hub</h1>
+        <p class="brand-subtitle" dir="auto">Files, PDFs, videos &amp; images from Google Drive</p>
       </div>
-
-      <div class="grade-banner">
-        <span class="grade-pill">12th Grade Folder</span>
-        <a href="https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link" target="_blank" rel="noopener noreferrer" class="btn btn-drive" style="padding: 4px 8px; font-size: 11px;">
-          Open 12th Drive
+      <div class="header-actions">
+        <button type="button" class="btn-refresh" onclick="loadDriveFiles(true)" title="Refresh files from Google Drive">
+          Refresh
+        </button>
+        <a id="topDriveLink" class="btn-drive-top" href="https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link" target="_blank" rel="noopener noreferrer">
+          Open in Google Drive
         </a>
       </div>
+    </header>
 
-      <div class="folder-nav">
-        <div class="folder-section-label">
-          <span>Subject Folders (7)</span>
-          <span id="totalItemsCounter">0 items</span>
-        </div>
-        <div id="sidebarFolderList"></div>
-      </div>
+    <!-- Only the 7 Subject Tabs -->
+    <nav class="subject-tabs" id="subjectTabs" aria-label="Subjects">
+      <!-- Populated by JS -->
+    </nav>
 
-      <div class="sidebar-footer">
-        <div class="field-label">12th Grade Root Folder Link</div>
-        <div id="rootFolderLinkDisplay" class="drive-link-box">https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link</div>
-        <div style="display: flex; gap: 6px;">
-          <button class="btn btn-secondary" style="flex: 1;" onclick="openDriveModal()">Drive & API Setup</button>
-          <button class="btn btn-secondary" onclick="clearLocalNotes()" title="Clear saved local notes">Clear Notes</button>
-        </div>
-      </div>
-    </aside>
+    <!-- Status / Error Banner -->
+    <div id="statusBanner" class="status-banner" role="status" aria-live="polite"></div>
 
-    <!-- Main Workspace -->
-    <main class="main-area">
-      <header class="top-header">
-        <div class="header-left">
-          <button class="mobile-menu-btn" onclick="toggleSidebar(true)" aria-label="Open menu">Folders</button>
-          <div>
-            <h2 id="activeSubjectHeading" dir="auto" class="header-title">PHYSICS</h2>
-            <div id="activeFolderPathLabel" class="header-sub">12th grade / PHYSICS • Folder ID: 1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h</div>
-          </div>
-        </div>
+    <!-- Subject Items Container (starts completely empty) -->
+    <section id="itemsContainer" class="items-list" aria-live="polite"></section>
 
-        <div class="header-actions">
-          <button class="btn btn-secondary" onclick="syncFromGoogleDrive(true)">Sync Drive Now</button>
-          <a id="openSubjectDriveLink" href="https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link" target="_blank" rel="noopener noreferrer" class="btn btn-drive">
-            Open Subject in Drive
-          </a>
-          <button class="btn btn-secondary" onclick="openDriveModal()">
-            <span id="driveStatusDot" class="status-dot"></span>
-            <span id="driveStatusText">Drive Link Ready</span>
-          </button>
-        </div>
-      </header>
-
-      <!-- Top Subject Tabs -->
-      <nav id="subjectTabsBar" class="subject-tabs-bar" aria-label="Subject Tabs"></nav>
-
-      <!-- Search & Sync Info Bar -->
-      <div class="toolbar">
-        <div class="search-box">
-          <input id="searchInput" type="search" dir="auto" class="search-input" placeholder="Search notes or files in active subject..." oninput="renderFeed()" />
-        </div>
-        <div class="toolbar-meta">
-          <span id="driveSyncSummary">Routes by Drive subfolder or filename/prefix (e.g. PHYSICS_, MATH_, KURDISH_)</span>
-        </div>
-      </div>
-
-      <!-- Feed / Stream -->
-      <section id="feedScroll" class="feed-scroll">
-        <div id="dropOverlay" class="drop-overlay">
-          <div class="drop-card">
-            <div style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">Drop files to attach & upload</div>
-            <div style="font-size: 12px; color: var(--text-muted);">Files route automatically by matching subject folder or filename prefix</div>
-          </div>
-        </div>
-        <div id="feedContainer" class="feed-inner"></div>
-      </section>
-
-      <!-- Composer: Text Notes/Announcements + File Uploads -->
-      <footer class="composer-wrap">
-        <form id="composerForm" class="composer-inner" onsubmit="handleSendPost(event)">
-          <div id="stagedFilesList" class="staged-list"></div>
-          <div class="composer-row">
-            <input id="fileInput" type="file" multiple accept=".pdf,image/*,video/*,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip" style="display: none;" onchange="handleFileInput(event)" />
-            <button type="button" class="btn btn-secondary" style="height: 42px; padding: 0 12px;" onclick="document.getElementById('fileInput').click()">
-              + Files
-            </button>
-            <textarea id="noteInput" dir="auto" rows="1" class="composer-textarea" placeholder="Write a note, announcement, or message (Kurdish, Arabic, English)..." onkeydown="handleNoteKeyDown(event)"></textarea>
-            <button type="submit" class="btn btn-primary" style="height: 42px; padding: 0 16px;">
-              Send
-            </button>
-          </div>
-        </form>
-      </footer>
-    </main>
+    <!-- Subtle Footer with Admin / Setup Link -->
+    <footer class="page-footer">
+      <span id="activeSubjectSummary">PHYSICS</span>
+      <button type="button" class="admin-link" onclick="openAdminModal()">Admin / Setup</button>
+    </footer>
   </div>
 
-  <!-- Google Drive / API Key / OAuth Configuration Modal -->
-  <div id="driveModal" class="modal-backdrop" onclick="if (event.target === this) closeDriveModal()">
-    <div class="modal-card">
+  <!-- Inline Preview Modal -->
+  <div id="previewModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <div class="modal-box">
       <div class="modal-header">
-        <h3 class="modal-title">Google Drive Connection — 12th Grade</h3>
-        <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="closeDriveModal()">&times;</button>
+        <h2 id="previewTitle" class="modal-title" dir="auto">File Preview</h2>
+        <div class="modal-header-right">
+          <a id="previewDownloadBtn" class="btn-download" href="#" target="_blank" rel="noopener noreferrer" download>Download</a>
+          <button type="button" class="btn-close" onclick="closePreviewModal()">Close</button>
+        </div>
       </div>
-
-      <div class="field-group">
-        <label class="field-label" for="driveFolderUrlInput">12th Grade Google Drive Folder URL or ID</label>
-        <input id="driveFolderUrlInput" type="text" class="field-input" value="https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link" />
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="googleApiKeyInput">Google API Key (for reading public/shared 12th grade folder files)</label>
-        <input id="googleApiKeyInput" type="text" class="field-input" placeholder="AIzaSy..." />
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="googleClientIdInput">Google OAuth 2.0 Client ID (optional — required for direct file upload into Drive)</label>
-        <input id="googleClientIdInput" type="text" class="field-input" placeholder="1234567890-xxxx.apps.googleusercontent.com" />
-      </div>
-
-      <div class="help-box">
-        <strong>Automatic Subject Matching Rules:</strong>
-        <ol>
-          <li><strong>Subfolder Match:</strong> If your 12th grade Drive folder has subfolders named <code>PHYSICS</code>, <code>MATH</code>, <code>KURDISH</code>, <code>ENGLISH</code>, <code>CHEMISTRY</code>, <code>BIOLOGY</code>, or <code>ARABIC</code> (case-insensitive, or matching Kurdish/Arabic labels), files inside them route straight to that tab.</li>
-          <li><strong>Filename / Prefix Match:</strong> Files placed directly inside the 12th grade folder are routed by prefix or keyword in the filename (e.g. <code>PHYSICS_ch1.pdf</code>, <code>math-exam.png</code>, <code>kurdish_lesson.mp4</code>, <code>arabic_note.pdf</code>).</li>
-        </ol>
-      </div>
-
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn btn-secondary" onclick="saveDriveSettings(false)">Save Settings</button>
-        <button type="button" class="btn btn-drive" onclick="saveDriveSettings(true)">Save & Sync Folder</button>
-        <button type="button" class="btn btn-primary" onclick="signInWithGoogleDrive()">Sign in with Google (Upload)</button>
-      </div>
+      <div id="previewBody" class="modal-body"></div>
     </div>
   </div>
 
-  <!-- File Preview Lightbox Modal -->
-  <div id="previewModal" class="modal-backdrop" onclick="if (event.target === this) closePreviewModal()">
-    <div class="modal-card" style="max-width: 820px;">
+  <!-- Discreet Admin / Read-Only Drive Setup Modal -->
+  <div id="adminModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="modal-box small-modal">
       <div class="modal-header">
-        <h3 id="previewTitle" dir="auto" class="modal-title">File Preview</h3>
-        <div style="display: flex; gap: 8px;">
-          <a id="previewExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-drive">Open Original</a>
-          <button class="btn btn-secondary" onclick="closePreviewModal()">Close</button>
-        </div>
+        <h2 id="adminTitle" class="modal-title">Admin / Read-Only Drive Setup</h2>
+        <button type="button" class="btn-close" onclick="closeAdminModal()">Close</button>
       </div>
-      <div id="previewContent" style="min-height: 260px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); border-radius: var(--radius-md); padding: 12px;"></div>
+      <form class="modal-body" onsubmit="saveAdminSettings(event)">
+        <div class="form-group">
+          <label class="form-label" for="driveFolderInput">Google Drive Folder Link or Folder ID</label>
+          <input id="driveFolderInput" class="form-input" type="text" required placeholder="https://drive.google.com/drive/folders/..." />
+          <div class="form-hint">Set the folder in Google Drive to "Anyone with the link" &rarr; Viewer.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="apiKeyInput">Google API Key (Read-Only Sync)</label>
+          <input id="apiKeyInput" class="form-input" type="text" placeholder="AIzaSy..." />
+          <div class="form-hint">Used only to list files from your public Drive folder. No sign-in required for friends.</div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-close" onclick="closeAdminModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save &amp; Sync</button>
+        </div>
+      </form>
     </div>
   </div>
-
-  <div id="toastContainer" class="toast-container"></div>
 
   <script>
-    const DEFAULT_GRADE_FOLDER_URL = 'https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link';
-    const DEFAULT_GRADE_FOLDER_ID = '1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h';
+    /* ---------------------------------------------------------
+       1. CONFIGURATION & STATE (CLEAN EMPTY START)
+       --------------------------------------------------------- */
+    const DEFAULT_DRIVE_URL = 'https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link';
+    const DEFAULT_FOLDER_ID = '1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h';
 
     const SUBJECTS = [
-      { id: 'PHYSICS', label: 'PHYSICS', keywords: ['physics', 'phys', 'فیزیا', 'الفيزياء'] },
-      { id: 'MATH', label: 'MATH', keywords: ['math', 'maths', 'mathematics', 'بیرکاری', 'الرياضيات'] },
-      { id: 'KURDISH', label: 'KURDISH', keywords: ['kurdish', 'kurd', 'کوردی'] },
-      { id: 'ENGLISH', label: 'ENGLISH', keywords: ['english', 'eng', 'ئینگلیزی', 'الانجليزية', 'الإنجليزية'] },
-      { id: 'CHEMISTRY', label: 'CHEMISTRY', keywords: ['chemistry', 'chem', 'کیمیا', 'الكيمياء'] },
-      { id: 'BIOLOGY', label: 'BIOLOGY', keywords: ['biology', 'bio', 'زیندەزانی', 'الأحياء', 'الاحياء'] },
-      { id: 'ARABIC', label: 'ARABIC', keywords: ['arabic', 'arab', 'عەرەبی', 'العربية'] }
+      'PHYSICS',
+      'MATH',
+      'KURDISH',
+      'ENGLISH',
+      'CHEMISTRY',
+      'BIOLOGY',
+      'ARABIC'
     ];
 
     const STORAGE_KEYS = {
-      notes: 'edudrive_12th_notes_v1',
-      driveConfig: 'edudrive_12th_drive_cfg_v1'
+      folderUrl: 'g12_hub_drive_url',
+      folderId: 'g12_hub_drive_id',
+      apiKey: 'g12_hub_api_key'
     };
 
     const state = {
       activeSubject: 'PHYSICS',
-      notes: [], // User-created notes/announcements (no fake demo content)
-      stagedFiles: [],
-      driveFilesBySubject: {
+      driveUrl: localStorage.getItem(STORAGE_KEYS.folderUrl) || DEFAULT_DRIVE_URL,
+      folderId: localStorage.getItem(STORAGE_KEYS.folderId) || DEFAULT_FOLDER_ID,
+      apiKey: localStorage.getItem(STORAGE_KEYS.apiKey) || '',
+      // Starts completely empty (zero fake/sample items)
+      itemsBySubject: {
         PHYSICS: [],
         MATH: [],
         KURDISH: [],
@@ -1012,758 +635,416 @@
         BIOLOGY: [],
         ARABIC: []
       },
-      subfolderIdsBySubject: {},
-      driveConfig: {
-        folderUrl: DEFAULT_GRADE_FOLDER_URL,
-        folderId: DEFAULT_GRADE_FOLDER_ID,
-        apiKey: '',
-        clientId: '',
-        accessToken: null
-      }
+      isLoading: false
     };
 
-    window.addEventListener('DOMContentLoaded', () => {
-      loadSavedState();
-      initDragAndDrop();
-      renderSubjectNavigation();
-      updateActiveHeader();
-      renderFeed();
-      if (state.driveConfig.apiKey || state.driveConfig.accessToken) {
-        syncFromGoogleDrive(false);
+    /* ---------------------------------------------------------
+       2. INITIALIZATION & RENDERING
+       --------------------------------------------------------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      applyDriveLinkToHeader();
+      renderSubjectTabs();
+      renderSubjectItems();
+
+      // Close modals on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closePreviewModal();
+          closeAdminModal();
+        }
+      });
+
+      // Automatically fetch if a Google API Key is configured
+      if (state.apiKey) {
+        loadDriveFiles(false);
       }
     });
 
-    function loadSavedState() {
-      try {
-        const savedNotes = localStorage.getItem(STORAGE_KEYS.notes);
-        if (savedNotes) {
-          const parsed = JSON.parse(savedNotes);
-          if (Array.isArray(parsed)) state.notes = parsed;
+    function applyDriveLinkToHeader() {
+      const topLink = document.getElementById('topDriveLink');
+      if (topLink) {
+        topLink.href = state.driveUrl || DEFAULT_DRIVE_URL;
+      }
+    }
+
+    function renderSubjectTabs() {
+      const tabsEl = document.getElementById('subjectTabs');
+      tabsEl.innerHTML = '';
+
+      SUBJECTS.forEach((subject) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'subject-tab' + (state.activeSubject === subject ? ' active' : '');
+        btn.textContent = subject;
+        btn.setAttribute('aria-pressed', state.activeSubject === subject ? 'true' : 'false');
+        btn.addEventListener('click', () => selectSubject(subject));
+        tabsEl.appendChild(btn);
+      });
+
+      document.getElementById('activeSubjectSummary').textContent = state.activeSubject;
+    }
+
+    function selectSubject(subject) {
+      if (!SUBJECTS.includes(subject)) return;
+      state.activeSubject = subject;
+      renderSubjectTabs();
+      renderSubjectItems();
+    }
+
+    function setStatusBanner(message, isError = false) {
+      const banner = document.getElementById('statusBanner');
+      if (!message) {
+        banner.textContent = '';
+        banner.className = 'status-banner';
+        return;
+      }
+      banner.textContent = message;
+      banner.className = 'status-banner visible' + (isError ? ' error' : '');
+    }
+
+    function renderSubjectItems() {
+      const container = document.getElementById('itemsContainer');
+      const items = state.itemsBySubject[state.activeSubject] || [];
+
+      if (state.isLoading) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p class="empty-title">Loading ${escapeHtml(state.activeSubject)} files...</p>
+            <p class="empty-desc">Checking Google Drive</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p class="empty-title" dir="auto">No files in ${escapeHtml(state.activeSubject)} yet</p>
+            <p class="empty-desc" dir="auto">Files added to your Google Drive folder for ${escapeHtml(state.activeSubject)} will appear here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      items.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'file-card';
+
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'file-meta';
+
+        const titleEl = document.createElement('h2');
+        titleEl.className = 'file-title';
+        titleEl.setAttribute('dir', 'auto');
+        titleEl.textContent = item.name;
+
+        const subEl = document.createElement('div');
+        subEl.className = 'file-sub';
+
+        const pillEl = document.createElement('span');
+        pillEl.className = 'type-pill';
+        pillEl.textContent = item.kindLabel;
+        subEl.appendChild(pillEl);
+
+        if (item.sizeLabel) {
+          const sizeSpan = document.createElement('span');
+          sizeSpan.textContent = item.sizeLabel;
+          subEl.appendChild(sizeSpan);
         }
-      } catch (err) {
-        console.warn('Could not load saved notes:', err);
-      }
 
-      try {
-        const savedCfg = localStorage.getItem(STORAGE_KEYS.driveConfig);
-        if (savedCfg) {
-          const parsedCfg = JSON.parse(savedCfg);
-          state.driveConfig = {
-            ...state.driveConfig,
-            folderUrl: parsedCfg.folderUrl || DEFAULT_GRADE_FOLDER_URL,
-            folderId: extractDriveFolderId(parsedCfg.folderUrl || parsedCfg.folderId || DEFAULT_GRADE_FOLDER_ID),
-            apiKey: parsedCfg.apiKey || '',
-            clientId: parsedCfg.clientId || ''
-          };
-        }
-      } catch (err) {
-        console.warn('Could not load saved Drive config:', err);
-      }
+        metaDiv.appendChild(titleEl);
+        metaDiv.appendChild(subEl);
 
-      document.getElementById('driveFolderUrlInput').value = state.driveConfig.folderUrl;
-      document.getElementById('googleApiKeyInput').value = state.driveConfig.apiKey;
-      document.getElementById('googleClientIdInput').value = state.driveConfig.clientId;
-      document.getElementById('rootFolderLinkDisplay').textContent = state.driveConfig.folderUrl;
-      updateDriveStatusIndicator();
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'file-actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.type = 'button';
+        viewBtn.className = 'btn-view';
+        viewBtn.textContent = 'View';
+        viewBtn.addEventListener('click', () => openItemPreview(state.activeSubject, index));
+
+        const downloadBtn = document.createElement('a');
+        downloadBtn.className = 'btn-download';
+        downloadBtn.textContent = 'Download';
+        downloadBtn.href = item.downloadUrl || item.previewUrl || '#';
+        downloadBtn.setAttribute('download', item.name);
+        downloadBtn.setAttribute('target', '_blank');
+        downloadBtn.setAttribute('rel', 'noopener noreferrer');
+
+        actionsDiv.appendChild(viewBtn);
+        actionsDiv.appendChild(downloadBtn);
+
+        card.appendChild(metaDiv);
+        card.appendChild(actionsDiv);
+        container.appendChild(card);
+      });
     }
 
-    function saveNotesToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(state.notes));
-      } catch (err) {
-        console.warn('Could not persist notes:', err);
+    /* ---------------------------------------------------------
+       3. INLINE PREVIEW FOR IMAGES, VIDEOS & PDFS/FILES
+       --------------------------------------------------------- */
+    function openItemPreview(subject, index) {
+      const item = (state.itemsBySubject[subject] || [])[index];
+      if (!item) return;
+
+      const modal = document.getElementById('previewModal');
+      const titleEl = document.getElementById('previewTitle');
+      const bodyEl = document.getElementById('previewBody');
+      const dlBtn = document.getElementById('previewDownloadBtn');
+
+      titleEl.textContent = item.name;
+      dlBtn.href = item.downloadUrl || item.previewUrl || '#';
+      dlBtn.setAttribute('download', item.name);
+
+      const url = item.previewUrl || item.downloadUrl || '';
+      if (!url) {
+        bodyEl.innerHTML = `
+          <div class="preview-fallback">
+            <p>Preview link is not available for this item.</p>
+          </div>
+        `;
+        modal.classList.add('open');
+        return;
       }
+
+      if (item.mediaType === 'image') {
+        bodyEl.innerHTML = `<img class="preview-image" src="${escapeAttr(url)}" alt="${escapeAttr(item.name)}" />`;
+      } else if (item.mediaType === 'video') {
+        bodyEl.innerHTML = `<video class="preview-video" src="${escapeAttr(url)}" controls autoplay playsinline></video>`;
+      } else {
+        // PDFs and documents via embedded viewer
+        bodyEl.innerHTML = `<iframe class="preview-frame" src="${escapeAttr(url)}" title="${escapeAttr(item.name)}"></iframe>`;
+      }
+
+      modal.classList.add('open');
     }
 
-    function clearLocalNotes() {
-      state.notes = [];
-      saveNotesToStorage();
-      renderSubjectNavigation();
-      renderFeed();
-      showToast('Cleared local notes.');
+    function closePreviewModal() {
+      const modal = document.getElementById('previewModal');
+      const bodyEl = document.getElementById('previewBody');
+      // Stop any playing video or frame when closing
+      bodyEl.innerHTML = '';
+      modal.classList.remove('open');
     }
 
-    function extractDriveFolderId(input) {
-      if (!input) return DEFAULT_GRADE_FOLDER_ID;
-      const trimmed = input.trim();
+    /* ---------------------------------------------------------
+       4. GOOGLE DRIVE READ-ONLY SYNC & SUBJECT ROUTING
+       --------------------------------------------------------- */
+    function extractFolderId(input) {
+      const trimmed = (input || '').trim();
+      if (!trimmed) return DEFAULT_FOLDER_ID;
       const match = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
       if (match && match[1]) return match[1];
       return trimmed;
     }
 
-    function selectSubject(subjectId) {
-      if (!SUBJECTS.some(s => s.id === subjectId)) return;
-      state.activeSubject = subjectId;
-      toggleSidebar(false);
-      renderSubjectNavigation();
-      updateActiveHeader();
-      renderFeed();
+    function openAdminModal() {
+      document.getElementById('driveFolderInput').value = state.driveUrl || DEFAULT_DRIVE_URL;
+      document.getElementById('apiKeyInput').value = state.apiKey || '';
+      document.getElementById('adminModal').classList.add('open');
     }
 
-    function getSubjectItems(subjectId) {
-      const subjectNotes = state.notes.filter(n => n.subject === subjectId);
-      const driveFiles = state.driveFilesBySubject[subjectId] || [];
-      return [...subjectNotes, ...driveFiles];
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.remove('open');
     }
 
-    function renderSubjectNavigation() {
-      const sidebarList = document.getElementById('sidebarFolderList');
-      const tabsBar = document.getElementById('subjectTabsBar');
-      let totalCount = 0;
+    function saveAdminSettings(event) {
+      event.preventDefault();
+      const rawFolder = document.getElementById('driveFolderInput').value.trim();
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
 
-      sidebarList.innerHTML = SUBJECTS.map(subj => {
-        const count = getSubjectItems(subj.id).length;
-        totalCount += count;
-        const isActive = subj.id === state.activeSubject;
-        return `
-          <button type="button" class="folder-item ${isActive ? 'active' : ''}" onclick="selectSubject('${subj.id}')">
-            <span class="folder-item-left">
-              <svg class="folder-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
-              </svg>
-              <span>${subj.label}</span>
-            </span>
-            <span class="folder-badge">${count}</span>
-          </button>
-        `;
-      }).join('');
+      const folderId = extractFolderId(rawFolder);
+      const folderUrl = rawFolder.startsWith('http')
+        ? rawFolder
+        : `https://drive.google.com/drive/folders/${folderId}?usp=drive_link`;
 
-      tabsBar.innerHTML = SUBJECTS.map(subj => {
-        const count = getSubjectItems(subj.id).length;
-        const isActive = subj.id === state.activeSubject;
-        return `
-          <button type="button" class="subject-tab ${isActive ? 'active' : ''}" onclick="selectSubject('${subj.id}')">
-            ${subj.label}${count > 0 ? ` (${count})` : ''}
-          </button>
-        `;
-      }).join('');
+      state.driveUrl = folderUrl;
+      state.folderId = folderId;
+      state.apiKey = apiKey;
 
-      document.getElementById('totalItemsCounter').textContent = `${totalCount} item${totalCount === 1 ? '' : 's'}`;
+      localStorage.setItem(STORAGE_KEYS.folderUrl, folderUrl);
+      localStorage.setItem(STORAGE_KEYS.folderId, folderId);
+      localStorage.setItem(STORAGE_KEYS.apiKey, apiKey);
+
+      applyDriveLinkToHeader();
+      closeAdminModal();
+      loadDriveFiles(true);
     }
 
-    function updateActiveHeader() {
-      const subj = SUBJECTS.find(s => s.id === state.activeSubject) || SUBJECTS[0];
-      const subfolderId = state.subfolderIdsBySubject[subj.id];
-      const targetUrl = subfolderId
-        ? `https://drive.google.com/drive/folders/${subfolderId}`
-        : state.driveConfig.folderUrl;
-
-      document.getElementById('activeSubjectHeading').textContent = subj.label;
-      document.getElementById('activeFolderPathLabel').textContent =
-        `12th grade / ${subj.label} • Root ID: ${state.driveConfig.folderId}`;
-      document.getElementById('openSubjectDriveLink').href = targetUrl;
-      document.getElementById('rootFolderLinkDisplay').textContent = state.driveConfig.folderUrl;
-    }
-
-    function updateDriveStatusIndicator() {
-      const dot = document.getElementById('driveStatusDot');
-      const text = document.getElementById('driveStatusText');
-      if (state.driveConfig.accessToken) {
-        dot.className = 'status-dot connected';
-        text.textContent = 'Drive Connected (OAuth)';
-      } else if (state.driveConfig.apiKey) {
-        dot.className = 'status-dot connected';
-        text.textContent = 'Drive API Ready';
-      } else {
-        dot.className = 'status-dot';
-        text.textContent = '12th Folder Linked';
-      }
-    }
-
-    /* Matching & Routing Logic for 12th Grade Google Drive Files */
-    function matchSubjectByName(rawName) {
-      if (!rawName) return null;
-      const lower = rawName.toLowerCase();
-
-      // 1. Check exact prefix like PHYSICS_, MATH-, KURDISH , etc.
-      for (const subj of SUBJECTS) {
-        const idLower = subj.id.toLowerCase();
-        if (
-          lower === idLower ||
-          lower.startsWith(idLower + '_') ||
-          lower.startsWith(idLower + '-') ||
-          lower.startsWith(idLower + ' ') ||
-          lower.startsWith(idLower + '.')
-        ) {
-          return subj.id;
+    /**
+     * Matches a subject from a subfolder name or filename prefix.
+     * Examples:
+     *  - Subfolder named "PHYSICS" or "Physics" -> "PHYSICS"
+     *  - Filename "MATH_chapter1.pdf" or "math - notes.pdf" -> "MATH"
+     */
+    function matchSubject(folderName, fileName) {
+      const candidates = [folderName || '', fileName || ''];
+      for (const raw of candidates) {
+        const upper = raw.toUpperCase().trim();
+        if (!upper) continue;
+        for (const subject of SUBJECTS) {
+          if (
+            upper === subject ||
+            upper.startsWith(subject + '_') ||
+            upper.startsWith(subject + '-') ||
+            upper.startsWith(subject + ' ') ||
+            upper.includes('/' + subject) ||
+            upper.includes(subject + '/')
+          ) {
+            return subject;
+          }
         }
       }
-
-      // 2. Check keywords in folder name or filename
-      for (const subj of SUBJECTS) {
-        if (subj.keywords.some(kw => lower.includes(kw.toLowerCase()))) {
-          return subj.id;
-        }
-      }
-
       return null;
     }
 
-    function detectFileKind(fileName, mimeType) {
-      const name = (fileName || '').toLowerCase();
+    function detectMediaAndLabel(mimeType, fileName) {
       const mime = (mimeType || '').toLowerCase();
-      if (mime.includes('pdf') || name.endsWith('.pdf')) return 'pdf';
-      if (mime.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(name)) return 'image';
-      if (mime.startsWith('video/') || /\.(mp4|mov|webm|mkv|avi|m4v)$/.test(name)) return 'video';
-      return 'doc';
+      const lower = (fileName || '').toLowerCase();
+
+      if (mime.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(lower)) {
+        return { mediaType: 'image', kindLabel: 'IMAGE' };
+      }
+      if (mime.startsWith('video/') || /\.(mp4|mov|webm|mkv|avi|m4v)$/.test(lower)) {
+        return { mediaType: 'video', kindLabel: 'VIDEO' };
+      }
+      if (mime === 'application/pdf' || lower.endsWith('.pdf')) {
+        return { mediaType: 'pdf', kindLabel: 'PDF' };
+      }
+      return { mediaType: 'file', kindLabel: 'FILE' };
     }
 
     function formatFileSize(bytes) {
-      if (!bytes && bytes !== 0) return '';
-      if (bytes === 0) return '0 B';
-      const units = ['B', 'KB', 'MB', 'GB'];
-      const idx = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
-      return `${(bytes / Math.pow(1024, idx)).toFixed(idx === 0 ? 0 : 1)} ${units[idx]}`;
+      const num = Number(bytes);
+      if (!Number.isFinite(num) || num <= 0) return '';
+      if (num < 1024) return `${num} B`;
+      if (num < 1024 * 1024) return `${(num / 1024).toFixed(1)} KB`;
+      if (num < 1024 * 1024 * 1024) return `${(num / (1024 * 1024)).toFixed(1)} MB`;
+      return `${(num / (1024 * 1024 * 1024)).toFixed(1)} GB`;
     }
 
-    /* Syncing from the 12th Grade Google Drive Folder */
-    async function syncFromGoogleDrive(showFeedback) {
-      const folderId = state.driveConfig.folderId || DEFAULT_GRADE_FOLDER_ID;
-      const token = state.driveConfig.accessToken;
-      const apiKey = state.driveConfig.apiKey;
-
-      if (!token && !apiKey) {
+    async function loadDriveFiles(showFeedback = true) {
+      if (!state.apiKey) {
         if (showFeedback) {
-          showToast('Add a Google API Key or sign in with Google in Drive Setup to fetch Drive files.', 'error');
+          setStatusBanner('Add a Google API Key in Admin / Setup to load files automatically from Google Drive.');
         }
+        renderSubjectItems();
         return;
       }
 
-      try {
-        const authParam = token ? '' : `&key=${encodeURIComponent(apiKey)}`;
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      state.isLoading = true;
+      setStatusBanner('');
+      renderSubjectItems();
 
-        // Query children inside the 12th grade folder
-        const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
-        const url = `https://www.googleapis.com/drive/v3/files?q=${q}&pageSize=200&fields=files(id,name,mimeType,size,webViewLink,webContentLink,parents)${authParam}`;
-
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-          throw new Error(`Google Drive API returned ${res.status}`);
-        }
-        const data = await res.json();
-        const items = Array.isArray(data.files) ? data.files : [];
-
-        const nextBuckets = {
-          PHYSICS: [],
-          MATH: [],
-          KURDISH: [],
-          ENGLISH: [],
-          CHEMISTRY: [],
-          BIOLOGY: [],
-          ARABIC: []
-        };
-        const nextSubfolders = {};
-        const directFiles = [];
-
-        for (const item of items) {
-          if (item.mimeType === 'application/vnd.google-apps.folder') {
-            const matchedSubj = matchSubjectByName(item.name);
-            if (matchedSubj) {
-              nextSubfolders[matchedSubj] = item.id;
-            }
-          } else {
-            directFiles.push(item);
-          }
-        }
-
-        // Fetch files inside any matched subject subfolders
-        for (const [subjId, subId] of Object.entries(nextSubfolders)) {
-          const subQ = encodeURIComponent(`'${subId}' in parents and trashed = false and mimeType != 'application/vnd.google-apps.folder'`);
-          const subUrl = `https://www.googleapis.com/drive/v3/files?q=${subQ}&pageSize=200&fields=files(id,name,mimeType,size,webViewLink,webContentLink)${authParam}`;
-          const subRes = await fetch(subUrl, { headers });
-          if (subRes.ok) {
-            const subData = await subRes.json();
-            for (const f of (subData.files || [])) {
-              nextBuckets[subjId].push(normalizeDriveFile(f, subjId));
-            }
-          }
-        }
-
-        // Route files directly in the 12th grade folder by name/prefix
-        for (const f of directFiles) {
-          const matchedSubj = matchSubjectByName(f.name) || state.activeSubject;
-          nextBuckets[matchedSubj].push(normalizeDriveFile(f, matchedSubj));
-        }
-
-        state.driveFilesBySubject = nextBuckets;
-        state.subfolderIdsBySubject = nextSubfolders;
-        renderSubjectNavigation();
-        updateActiveHeader();
-        renderFeed();
-
-        if (showFeedback) {
-          showToast('Synced files from 12th grade Google Drive folder.');
-        }
-      } catch (err) {
-        console.error(err);
-        if (showFeedback) {
-          showToast(`Drive sync error: ${err.message}`, 'error');
-        }
-      }
-    }
-
-    function normalizeDriveFile(file, subjectId) {
-      const kind = detectFileKind(file.name, file.mimeType);
-      return {
-        id: `drive-${file.id}`,
-        entryType: 'drive_file',
-        subject: subjectId,
-        title: file.name,
-        kind,
-        mimeType: file.mimeType || '',
-        sizeLabel: file.size ? formatFileSize(Number(file.size)) : 'Drive File',
-        viewUrl: file.webViewLink || `https://drive.google.com/file/d/${file.id}/view`,
-        downloadUrl: file.webContentLink || file.webViewLink || `https://drive.google.com/file/d/${file.id}/view`,
-        timestamp: 'Google Drive'
-      };
-    }
-
-    /* Staging & Sending Notes + Files */
-    function initDragAndDrop() {
-      const scrollArea = document.getElementById('feedScroll');
-      const overlay = document.getElementById('dropOverlay');
-      let counter = 0;
-
-      scrollArea.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        counter++;
-        overlay.classList.add('visible');
-      });
-
-      scrollArea.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        counter = Math.max(0, counter - 1);
-        if (counter === 0) overlay.classList.remove('visible');
-      });
-
-      scrollArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-      });
-
-      scrollArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        counter = 0;
-        overlay.classList.remove('visible');
-        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          stageFiles(Array.from(e.dataTransfer.files));
-        }
-      });
-    }
-
-    function handleFileInput(event) {
-      const files = Array.from(event.target.files || []);
-      if (files.length > 0) stageFiles(files);
-      event.target.value = '';
-    }
-
-    function stageFiles(files) {
-      for (const file of files) {
-        const matchedSubj = matchSubjectByName(file.name) || state.activeSubject;
-        state.stagedFiles.push({
-          id: `stage-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-          file,
-          name: file.name,
-          subject: matchedSubj,
-          kind: detectFileKind(file.name, file.type),
-          sizeLabel: formatFileSize(file.size),
-          objectUrl: URL.createObjectURL(file)
-        });
-      }
-      renderStagedFiles();
-    }
-
-    function removeStagedFile(id) {
-      state.stagedFiles = state.stagedFiles.filter(item => item.id !== id);
-      renderStagedFiles();
-    }
-
-    function renderStagedFiles() {
-      const container = document.getElementById('stagedFilesList');
-      if (state.stagedFiles.length === 0) {
-        container.innerHTML = '';
-        return;
-      }
-      container.innerHTML = state.stagedFiles.map(item => `
-        <span class="staged-chip">
-          <strong>[${escapeHtml(item.subject)}]</strong>
-          <span>${escapeHtml(item.name)}</span>
-          <span style="color: var(--text-muted);">(${escapeHtml(item.sizeLabel)})</span>
-          <button type="button" onclick="removeStagedFile('${item.id}')" style="font-weight: 700; padding: 0 4px;">&times;</button>
-        </span>
-      `).join('');
-    }
-
-    function handleNoteKeyDown(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        document.getElementById('composerForm').dispatchEvent(new Event('submit'));
-      }
-    }
-
-    async function handleSendPost(event) {
-      event.preventDefault();
-      const noteInput = document.getElementById('noteInput');
-      const text = noteInput.value.trim();
-
-      if (!text && state.stagedFiles.length === 0) return;
-
-      const timeLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const attachments = [];
-
-      for (const item of state.stagedFiles) {
-        let externalUrl = item.objectUrl;
-        let uploadedToDrive = false;
-
-        if (state.driveConfig.accessToken) {
-          try {
-            const targetFolderId = await resolveOrCreateDriveSubjectFolder(item.subject);
-            const driveFile = await uploadFileMultipart(item.file, targetFolderId);
-            if (driveFile && driveFile.webViewLink) {
-              externalUrl = driveFile.webViewLink;
-              uploadedToDrive = true;
-            }
-          } catch (err) {
-            console.error('Upload error:', err);
-            showToast(`Could not upload ${item.name} to Drive; kept in session.`, 'error');
-          }
-        }
-
-        attachments.push({
-          id: `att-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          name: item.name,
-          kind: item.kind,
-          sizeLabel: item.sizeLabel,
-          url: item.objectUrl,
-          externalUrl,
-          uploadedToDrive
-        });
-      }
-
-      const newEntry = {
-        id: `note-${Date.now()}`,
-        entryType: 'note',
-        subject: state.activeSubject,
-        text,
-        attachments,
-        timestamp: timeLabel
+      const freshMap = {
+        PHYSICS: [],
+        MATH: [],
+        KURDISH: [],
+        ENGLISH: [],
+        CHEMISTRY: [],
+        BIOLOGY: [],
+        ARABIC: []
       };
 
-      state.notes.unshift(newEntry);
-      saveNotesToStorage();
-
-      noteInput.value = '';
-      state.stagedFiles = [];
-      renderStagedFiles();
-      renderSubjectNavigation();
-      renderFeed();
-
-      if (state.driveConfig.accessToken && attachments.some(a => a.uploadedToDrive)) {
-        await syncFromGoogleDrive(false);
-        showToast(`Uploaded & synced to 12th grade / ${state.activeSubject}`);
-      } else {
-        showToast(`Added to ${state.activeSubject}`);
-      }
-    }
-
-    async function resolveOrCreateDriveSubjectFolder(subjectId) {
-      if (state.subfolderIdsBySubject[subjectId]) {
-        return state.subfolderIdsBySubject[subjectId];
-      }
-      const parentId = state.driveConfig.folderId || DEFAULT_GRADE_FOLDER_ID;
-      const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${state.driveConfig.accessToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: subjectId,
-          mimeType: 'application/vnd.google-apps.folder',
-          parents: [parentId]
-        })
-      });
-      if (!createRes.ok) {
-        return parentId;
-      }
-      const created = await createRes.json();
-      state.subfolderIdsBySubject[subjectId] = created.id;
-      return created.id;
-    }
-
-    async function uploadFileMultipart(file, folderId) {
-      const metadata = { name: file.name, parents: [folderId] };
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', file);
-
-      const res = await fetch(
-        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',
-        {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${state.driveConfig.accessToken}` },
-          body: form
-        }
-      );
-      if (!res.ok) throw new Error(`Upload failed (${res.status})`);
-      return res.json();
-    }
-
-    /* Rendering Feed */
-    function renderFeed() {
-      const container = document.getElementById('feedContainer');
-      const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-      const subj = SUBJECTS.find(s => s.id === state.activeSubject) || SUBJECTS[0];
-
-      const items = getSubjectItems(subj.id).filter(item => {
-        if (!query) return true;
-        const textMatch = (item.text || '').toLowerCase().includes(query);
-        const titleMatch = (item.title || '').toLowerCase().includes(query);
-        const attMatch = Array.isArray(item.attachments) &&
-          item.attachments.some(a => (a.name || '').toLowerCase().includes(query));
-        return textMatch || titleMatch || attMatch;
-      });
-
-      if (items.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3 dir="auto" class="empty-title">No items in ${escapeHtml(subj.label)} yet</h3>
-            <p class="empty-desc">
-              Write a note or attach PDFs, images, videos, or documents below—or connect your Google API Key / OAuth in Drive Setup to sync files from your 12th grade Drive folder.
-            </p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = items.map(item => {
-        if (item.entryType === 'drive_file') {
-          return renderStandaloneDriveFileCard(item);
-        }
-        return renderNoteCard(item);
-      }).join('');
-    }
-
-    function renderNoteCard(note) {
-      const hasAtt = Array.isArray(note.attachments) && note.attachments.length > 0;
-      return `
-        <article class="post-card">
-          <div class="post-header">
-            <div class="post-author-wrap">
-              <div class="avatar">${escapeHtml(note.subject.slice(0, 2))}</div>
-              <div>
-                <div class="post-author">${escapeHtml(note.subject)} • Note / Post</div>
-                <div class="post-time">${escapeHtml(note.timestamp || '')}</div>
-              </div>
-            </div>
-          </div>
-          ${note.text ? `<p dir="auto" class="post-text">${escapeHtml(note.text)}</p>` : ''}
-          ${hasAtt ? `
-            <div class="attachments-grid">
-              ${note.attachments.map(att => renderAttachmentBox(att.name, att.kind, att.sizeLabel, att.url, att.externalUrl, att.uploadedToDrive)).join('')}
-            </div>
-          ` : ''}
-        </article>
-      `;
-    }
-
-    function renderStandaloneDriveFileCard(file) {
-      return `
-        <article class="post-card">
-          <div class="post-header">
-            <div class="post-author-wrap">
-              <div class="avatar">GD</div>
-              <div>
-                <div class="post-author">${escapeHtml(file.subject)} • Google Drive File</div>
-                <div class="post-time">${escapeHtml(file.sizeLabel || 'Drive File')}</div>
-              </div>
-            </div>
-            <span class="type-tag">${escapeHtml(file.kind)}</span>
-          </div>
-          <div class="attachments-grid">
-            ${renderAttachmentBox(file.title, file.kind, file.sizeLabel, file.viewUrl, file.viewUrl, true)}
-          </div>
-        </article>
-      `;
-    }
-
-    function renderAttachmentBox(name, kind, sizeLabel, previewUrl, externalUrl, inDrive) {
-      const safeName = escapeHtml(name);
-      const encodedPreview = encodeURIComponent(previewUrl || '');
-      const encodedExternal = encodeURIComponent(externalUrl || previewUrl || '');
-
-      let mediaHtml = '';
-      if (kind === 'image' && previewUrl) {
-        mediaHtml = `
-          <div class="attachment-media" onclick="openPreview('${safeName}', '${kind}', '${encodedPreview}', '${encodedExternal}')">
-            <img src="${escapeHtml(previewUrl)}" alt="${safeName}" />
-          </div>
-        `;
-      } else if (kind === 'video' && previewUrl) {
-        mediaHtml = `
-          <div class="attachment-media" onclick="openPreview('${safeName}', '${kind}', '${encodedPreview}', '${encodedExternal}')">
-            <video src="${escapeHtml(previewUrl)}" muted></video>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="attachment-card">
-          ${mediaHtml}
-          <div class="attachment-body">
-            <div>
-              <div dir="auto" class="attachment-name">${safeName}</div>
-              <div class="attachment-meta">${escapeHtml(sizeLabel || '')}${inDrive ? ' • Google Drive' : ''}</div>
-            </div>
-            <span class="type-tag">${escapeHtml(kind)}</span>
-          </div>
-          <div class="attachment-actions">
-            <button type="button" class="btn btn-secondary" style="padding: 5px 10px; font-size: 11px;" onclick="openPreview('${safeName}', '${kind}', '${encodedPreview}', '${encodedExternal}')">
-              Preview
-            </button>
-            ${externalUrl ? `
-              <a href="${escapeHtml(externalUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-drive" style="padding: 5px 10px; font-size: 11px;">
-                Open
-              </a>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }
-
-    /* Modals */
-    function openDriveModal() {
-      document.getElementById('driveFolderUrlInput').value = state.driveConfig.folderUrl;
-      document.getElementById('googleApiKeyInput').value = state.driveConfig.apiKey;
-      document.getElementById('googleClientIdInput').value = state.driveConfig.clientId;
-      document.getElementById('driveModal').classList.add('open');
-    }
-
-    function closeDriveModal() {
-      document.getElementById('driveModal').classList.remove('open');
-    }
-
-    function saveDriveSettings(shouldSync) {
-      const folderUrlInput = document.getElementById('driveFolderUrlInput').value.trim() || DEFAULT_GRADE_FOLDER_URL;
-      const apiKey = document.getElementById('googleApiKeyInput').value.trim();
-      const clientId = document.getElementById('googleClientIdInput').value.trim();
-
-      state.driveConfig.folderUrl = folderUrlInput;
-      state.driveConfig.folderId = extractDriveFolderId(folderUrlInput);
-      state.driveConfig.apiKey = apiKey;
-      state.driveConfig.clientId = clientId;
-
       try {
-        localStorage.setItem(STORAGE_KEYS.driveConfig, JSON.stringify({
-          folderUrl: state.driveConfig.folderUrl,
-          folderId: state.driveConfig.folderId,
-          apiKey: state.driveConfig.apiKey,
-          clientId: state.driveConfig.clientId
-        }));
-      } catch (err) {
-        console.warn('Could not save Drive settings:', err);
-      }
+        // 1. Find immediate subfolders inside the root 12th grade folder
+        const folderQuery = encodeURIComponent(
+          `'${state.folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const foldersResp = await fetch(
+          `https://www.googleapis.com/drive/v3/files?q=${folderQuery}&fields=files(id,name)&pageSize=100&key=${encodeURIComponent(state.apiKey)}`
+        );
 
-      updateDriveStatusIndicator();
-      updateActiveHeader();
-      closeDriveModal();
-      showToast('Saved 12th grade Google Drive settings.');
-
-      if (shouldSync) {
-        syncFromGoogleDrive(true);
-      }
-    }
-
-    function signInWithGoogleDrive() {
-      saveDriveSettings(false);
-      const clientId = state.driveConfig.clientId;
-      if (!clientId) {
-        showToast('Enter a Google OAuth 2.0 Client ID first to sign in.', 'error');
-        return;
-      }
-      if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
-        showToast('Google sign-in script is still loading. Try again in a moment.', 'error');
-        return;
-      }
-
-      const tokenClient = window.google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/drive',
-        callback: async (resp) => {
-          if (resp && resp.access_token) {
-            state.driveConfig.accessToken = resp.access_token;
-            updateDriveStatusIndicator();
-            showToast('Signed in with Google Drive.');
-            await syncFromGoogleDrive(true);
-          } else {
-            showToast('Google sign-in did not return an access token.', 'error');
-          }
+        if (!foldersResp.ok) {
+          throw new Error(`Google Drive API returned ${foldersResp.status}`);
         }
-      });
-      tokenClient.requestAccessToken({ prompt: 'consent' });
-    }
+        const foldersData = await foldersResp.json();
+        const subfolders = foldersData.files || [];
 
-    function openPreview(name, kind, encodedPreview, encodedExternal) {
-      const previewUrl = decodeURIComponent(encodedPreview || '');
-      const externalUrl = decodeURIComponent(encodedExternal || previewUrl || '');
+        // Map subfolder ID -> subject name
+        const subfolderSubjectById = {};
+        const parentIdsToScan = [state.folderId];
 
-      document.getElementById('previewTitle').textContent = name;
-      const extLink = document.getElementById('previewExternalLink');
-      extLink.href = externalUrl || '#';
+        subfolders.forEach((sf) => {
+          const matched = matchSubject(sf.name, '');
+          if (matched) {
+            subfolderSubjectById[sf.id] = matched;
+            parentIdsToScan.push(sf.id);
+          }
+        });
 
-      const box = document.getElementById('previewContent');
-      if (!previewUrl) {
-        box.innerHTML = `<div style="color: var(--text-muted); font-size: 13px;">No preview stream available. Use "Open Original" above.</div>`;
-      } else if (kind === 'image') {
-        box.innerHTML = `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(name)}" style="max-width: 100%; max-height: 68vh; border-radius: 8px;" />`;
-      } else if (kind === 'video') {
-        box.innerHTML = `<video src="${escapeHtml(previewUrl)}" controls autoplay style="max-width: 100%; max-height: 68vh; border-radius: 8px;"></video>`;
-      } else if (kind === 'pdf') {
-        box.innerHTML = `<iframe src="${escapeHtml(previewUrl)}" style="width: 100%; height: 68vh; border: none; border-radius: 8px; background: #fff;"></iframe>`;
-      } else {
-        box.innerHTML = `
-          <div style="text-align: center; color: var(--text-muted); font-size: 13px;">
-            <p style="margin: 0 0 10px;">Preview is handled directly in Google Drive or your device viewer.</p>
-            <a href="${escapeHtml(externalUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-drive">Open File</a>
-          </div>
-        `;
+        // 2. Fetch non-folder files from root folder and matched subject subfolders
+        for (const parentId of parentIdsToScan) {
+          const fileQuery = encodeURIComponent(
+            `'${parentId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+          );
+          const filesResp = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q=${fileQuery}&fields=files(id,name,mimeType,size,webViewLink,webContentLink)&pageSize=200&key=${encodeURIComponent(state.apiKey)}`
+          );
+          if (!filesResp.ok) {
+            throw new Error(`Google Drive API file query returned ${filesResp.status}`);
+          }
+          const filesData = await filesResp.json();
+          const files = filesData.files || [];
+
+          const folderSubject = subfolderSubjectById[parentId] || '';
+
+          files.forEach((file) => {
+            const targetSubject = matchSubject(folderSubject, file.name);
+            if (!targetSubject) return;
+
+            const { mediaType, kindLabel } = detectMediaAndLabel(file.mimeType, file.name);
+            const previewUrl =
+              mediaType === 'pdf'
+                ? `https://drive.google.com/file/d/${file.id}/preview`
+                : file.webViewLink || `https://drive.google.com/file/d/${file.id}/view`;
+
+            const downloadUrl =
+              file.webContentLink ||
+              `https://drive.google.com/uc?export=download&id=${file.id}`;
+
+            freshMap[targetSubject].push({
+              id: file.id,
+              name: file.name,
+              mediaType,
+              kindLabel,
+              sizeLabel: formatFileSize(file.size),
+              previewUrl,
+              downloadUrl
+            });
+          });
+        }
+
+        state.itemsBySubject = freshMap;
+        setStatusBanner('');
+      } catch (err) {
+        console.error('Drive sync error:', err);
+        setStatusBanner(
+          'Could not read files from Google Drive. Check that the folder is shared as "Anyone with the link (Viewer)" and your API Key is valid.',
+          true
+        );
+      } finally {
+        state.isLoading = false;
+        renderSubjectItems();
       }
-
-      document.getElementById('previewModal').classList.add('open');
     }
 
-    function closePreviewModal() {
-      document.getElementById('previewContent').innerHTML = '';
-      document.getElementById('previewModal').classList.remove('open');
-    }
-
-    function toggleSidebar(open) {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('mobileBackdrop');
-      if (open) {
-        sidebar.classList.add('open');
-        backdrop.classList.add('open');
-      } else {
-        sidebar.classList.remove('open');
-        backdrop.classList.remove('open');
-      }
-    }
-
+    /* ---------------------------------------------------------
+       5. ESCAPE HELPERS
+       --------------------------------------------------------- */
     function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str == null ? '' : String(str);
-      return div.innerHTML;
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const el = document.createElement('div');
-      el.className = `toast-item ${type === 'error' ? 'error' : ''}`;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.remove();
-      }, 3200);
+    function escapeAttr(str) {
+      return escapeHtml(str);
     }
   </script>
 </body>
