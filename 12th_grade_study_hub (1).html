@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12th Grade Study Hub</title>
+  <style>
+    /* =====================================================================
+       100% SELF-CONTAINED EMBEDDED STYLES (NO EXTERNAL CSS DEPENDENCIES)
+       ===================================================================== */
+    :root {
+      --bg-page: #0b1120;
+      --bg-surface: #131c31;
+      --bg-card: #192540;
+      --bg-hover: #223254;
+      --bg-input: #0b1120;
+      --border: #2a3b5e;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-tint: rgba(59, 130, 246, 0.16);
+      --drive-green: #10b981;
+      --drive-green-hover: #059669;
+      --danger-bg: rgba(127, 29, 29, 0.35);
+      --danger-border: rgba(248, 113, 113, 0.55);
+      --danger-text: #fecaca;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* Main Centered Shell */
+    .app-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 44px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Bar */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .header-subtitle {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-refresh {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-refresh:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .btn-drive {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background-color: var(--drive-green);
+      border: none;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      transition: background-color 0.15s ease, transform 0.12s ease;
+    }
+
+    .btn-drive:hover {
+      background-color: var(--drive-green-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Subject Tabs Grid */
+    .tabs-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 13px 10px;
+      border-radius: var(--radius-md);
+      background-color: transparent;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-align: center;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: var(--bg-hover);
+      border-color: var(--border);
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Notice Banner */
+    .notice-banner {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .notice-banner.visible {
+      display: block;
+    }
+
+    .notice-banner.error {
+      background-color: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    /* File Items List */
+    .files-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .file-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      transition: border-color 0.15s ease;
+    }
+
+    .file-card:hover {
+      border-color: #476396;
+    }
+
+    .file-info {
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+
+    .file-name {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .file-meta {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    .file-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background-color: var(--accent-tint);
+      color: #93c5fd;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      background-color: var(--accent);
+      border: none;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-width: 112px;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-view:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-width: 116px;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-download:hover {
+      background-color: var(--bg-hover);
+    }
+
+    /* Empty / Loading State */
+    .empty-box {
+      text-align: center;
+      background-color: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 46px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-title {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .empty-text {
+      margin: 0;
+      font-size: 0.92rem;
+    }
+
+    /* Footer with Discreet Admin / Setup */
+    .footer {
+      margin-top: 32px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(42, 59, 94, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .admin-trigger {
+      background: none;
+      border: none;
+      padding: 4px 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      opacity: 0.72;
+    }
+
+    .admin-trigger:hover {
+      opacity: 1;
+      color: var(--text-primary);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(2, 6, 23, 0.84);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: 100%;
+      max-width: 880px;
+      max-height: 90vh;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-panel.narrow {
+      max-width: 500px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-heading {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .modal-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-close {
+      padding: 8px 13px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .btn-close:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .modal-content {
+      padding: 18px;
+      overflow: auto;
+      flex: 1;
+    }
+
+    .media-image {
+      display: block;
+      max-width: 100%;
+      max-height: 72vh;
+      margin: 0 auto;
+      border-radius: var(--radius-md);
+    }
+
+    .media-video {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      border-radius: var(--radius-md);
+      background-color: #000000;
+    }
+
+    .media-frame {
+      width: 100%;
+      height: 70vh;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background-color: #ffffff;
+    }
+
+    .media-empty {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-secondary);
+    }
+
+    /* Setup Form */
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 0.92rem;
+    }
+
+    .field-note {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .modal-footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-save {
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background-color: var(--accent);
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .btn-save:hover {
+      background-color: var(--accent-hover);
+    }
+
+    @media (max-width: 600px) {
+      .tabs-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .file-actions {
+        width: 100%;
+      }
+
+      .btn-view,
+      .btn-download {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="header">
+      <div>
+        <h1 class="header-title" dir="auto">12th Grade Study Hub</h1>
+        <p class="header-subtitle" dir="auto">View &amp; download files from Google Drive</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-refresh" onclick="syncDriveFiles(true)">Refresh</button>
+        <a
+          id="openDriveBtn"
+          class="btn-drive"
+          href="https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open in Google Drive
+        </a>
+      </div>
+    </header>
+
+    <!-- 7 Subject Tabs -->
+    <nav id="tabsBar" class="tabs-bar" aria-label="Subjects"></nav>
+
+    <!-- Status / Error Banner -->
+    <div id="noticeBanner" class="notice-banner" role="status" aria-live="polite"></div>
+
+    <!-- Viewer Items List (Starts Clean & Empty) -->
+    <main id="filesContainer" class="files-list" aria-live="polite"></main>
+
+    <!-- Discreet Admin / Setup Footer -->
+    <footer class="footer">
+      <span id="currentSubjectLabel" dir="auto">PHYSICS</span>
+      <button type="button" class="admin-trigger" onclick="openSetupModal()">Admin / Setup</button>
+    </footer>
+  </div>
+
+  <!-- Inline File Preview Modal -->
+  <div id="previewModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="previewTitle" class="modal-heading" dir="auto">Preview</h2>
+        <div class="modal-head-actions">
+          <a id="previewDownloadLink" class="btn-download" href="#" target="_blank" rel="noopener noreferrer" download>
+            Download
+          </a>
+          <button type="button" class="btn-close" onclick="closePreviewModal()">Close</button>
+        </div>
+      </div>
+      <div id="previewBody" class="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Admin / Folder Setup Modal (No API Key Field) -->
+  <div id="setupModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+    <div class="modal-panel narrow">
+      <div class="modal-head">
+        <h2 id="setupTitle" class="modal-heading">Admin / Folder Setup</h2>
+        <button type="button" class="btn-close" onclick="closeSetupModal()">Close</button>
+      </div>
+      <form class="modal-content" onsubmit="saveFolderSetup(event)">
+        <div class="field-group">
+          <label class="field-label" for="folderInput">12th Grade Google Drive Folder Link or ID</label>
+          <input
+            id="folderInput"
+            class="field-input"
+            type="text"
+            required
+            placeholder="https://drive.google.com/drive/folders/..."
+          />
+          <div class="field-note">
+            Make sure the folder in Google Drive is shared as "Anyone with the link" &rarr; Viewer.
+          </div>
+        </div>
+        <div class="modal-footer-actions">
+          <button type="button" class="btn-close" onclick="closeSetupModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save &amp; Sync</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* =====================================================================
+       1. CONFIGURATION & STATE (ZERO FAKE OR SAMPLE ITEMS)
+       ===================================================================== */
+    const DEFAULT_DRIVE_URL = 'https://drive.google.com/drive/folders/1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h?usp=drive_link';
+    const DEFAULT_FOLDER_ID = '1wRM8xbYN6rfb7WsnFSsalMCvWdHCfV1h';
+    const EMBEDDED_API_KEY = 'AIzaSyBOKQvVN5Kh2X5ZHIHM7i2NfrE_EEfCZFo';
+
+    const SUBJECTS = [
+      'PHYSICS',
+      'MATH',
+      'KURDISH',
+      'ENGLISH',
+      'CHEMISTRY',
+      'BIOLOGY',
+      'ARABIC'
+    ];
+
+    const STORAGE_KEYS = {
+      folderUrl: 'g12_study_hub_folder_url_v1',
+      folderId: 'g12_study_hub_folder_id_v1'
+    };
+
+    const appState = {
+      activeSubject: 'PHYSICS',
+      folderUrl: localStorage.getItem(STORAGE_KEYS.folderUrl) || DEFAULT_DRIVE_URL,
+      folderId: localStorage.getItem(STORAGE_KEYS.folderId) || DEFAULT_FOLDER_ID,
+      itemsBySubject: {
+        PHYSICS: [],
+        MATH: [],
+        KURDISH: [],
+        ENGLISH: [],
+        CHEMISTRY: [],
+        BIOLOGY: [],
+        ARABIC: []
+      },
+      isSyncing: false
+    };
+
+    /* =====================================================================
+       2. INITIALIZATION & UI RENDERING
+       ===================================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      syncHeaderDriveLink();
+      renderSubjectTabs();
+      renderSubjectFiles();
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closePreviewModal();
+          closeSetupModal();
+        }
+      });
+
+      syncDriveFiles(false);
+    });
+
+    function syncHeaderDriveLink() {
+      const linkEl = document.getElementById('openDriveBtn');
+      if (linkEl) {
+        linkEl.href = appState.folderUrl || DEFAULT_DRIVE_URL;
+      }
+    }
+
+    function renderSubjectTabs() {
+      const tabsContainer = document.getElementById('tabsBar');
+      tabsContainer.innerHTML = '';
+
+      SUBJECTS.forEach((subject) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'tab-btn' + (appState.activeSubject === subject ? ' active' : '');
+        button.textContent = subject;
+        button.setAttribute('dir', 'auto');
+        button.setAttribute('aria-pressed', appState.activeSubject === subject ? 'true' : 'false');
+        button.addEventListener('click', () => {
+          appState.activeSubject = subject;
+          renderSubjectTabs();
+          renderSubjectFiles();
+        });
+        tabsContainer.appendChild(button);
+      });
+
+      document.getElementById('currentSubjectLabel').textContent = appState.activeSubject;
+    }
+
+    function setNotice(message, isError = false) {
+      const banner = document.getElementById('noticeBanner');
+      if (!message) {
+        banner.textContent = '';
+        banner.className = 'notice-banner';
+        return;
+      }
+      banner.textContent = message;
+      banner.className = 'notice-banner visible' + (isError ? ' error' : '');
+    }
+
+    function renderSubjectFiles() {
+      const container = document.getElementById('filesContainer');
+      const items = appState.itemsBySubject[appState.activeSubject] || [];
+
+      if (appState.isSyncing) {
+        container.innerHTML = `
+          <div class="empty-box">
+            <p class="empty-title">Loading ${escapeHtml(appState.activeSubject)}...</p>
+            <p class="empty-text">Checking Google Drive</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-box">
+            <p class="empty-title" dir="auto">No files in ${escapeHtml(appState.activeSubject)} yet</p>
+            <p class="empty-text" dir="auto">Files placed in Google Drive for ${escapeHtml(appState.activeSubject)} will show up here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      items.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'file-card';
+
+        const info = document.createElement('div');
+        info.className = 'file-info';
+
+        const title = document.createElement('h2');
+        title.className = 'file-name';
+        title.setAttribute('dir', 'auto');
+        title.textContent = item.name;
+
+        const meta = document.createElement('div');
+        meta.className = 'file-meta';
+
+        const badge = document.createElement('span');
+        badge.className = 'file-badge';
+        badge.textContent = item.typeLabel;
+        meta.appendChild(badge);
+
+        if (item.sizeLabel) {
+          const sizeSpan = document.createElement('span');
+          sizeSpan.textContent = item.sizeLabel;
+          meta.appendChild(sizeSpan);
+        }
+
+        if (item.isFallback) {
+          const fallbackSpan = document.createElement('span');
+          fallbackSpan.textContent = 'General Folder File';
+          meta.appendChild(fallbackSpan);
+        }
+
+        info.appendChild(title);
+        info.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'file-actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.type = 'button';
+        viewBtn.className = 'btn-view';
+        viewBtn.textContent = 'View';
+        viewBtn.addEventListener('click', () => openPreview(appState.activeSubject, index));
+
+        const downloadLink = document.createElement('a');
+        downloadLink.className = 'btn-download';
+        downloadLink.textContent = 'Download';
+        downloadLink.href = item.downloadUrl || item.previewUrl || '#';
+        downloadLink.setAttribute('download', item.name);
+        downloadLink.setAttribute('target', '_blank');
+        downloadLink.setAttribute('rel', 'noopener noreferrer');
+
+        actions.appendChild(viewBtn);
+        actions.appendChild(downloadLink);
+
+        card.appendChild(info);
+        card.appendChild(actions);
+        container.appendChild(card);
+      });
+    }
+
+    /* =====================================================================
+       3. INLINE PREVIEW FOR IMAGES, VIDEOS & PDFS
+       ===================================================================== */
+    function openPreview(subject, index) {
+      const item = (appState.itemsBySubject[subject] || [])[index];
+      if (!item) return;
+
+      const modal = document.getElementById('previewModal');
+      const titleEl = document.getElementById('previewTitle');
+      const bodyEl = document.getElementById('previewBody');
+      const downloadEl = document.getElementById('previewDownloadLink');
+
+      titleEl.textContent = item.name;
+      downloadEl.href = item.downloadUrl || item.previewUrl || '#';
+      downloadEl.setAttribute('download', item.name);
+
+      const url = item.previewUrl || item.downloadUrl || '';
+      if (!url) {
+        bodyEl.innerHTML = `<div class="media-empty"><p>No preview available for this file.</p></div>`;
+        modal.classList.add('open');
+        return;
+      }
+
+      if (item.mediaKind === 'image') {
+        bodyEl.innerHTML = `<img class="media-image" src="${escapeAttr(url)}" alt="${escapeAttr(item.name)}" />`;
+      } else if (item.mediaKind === 'video') {
+        bodyEl.innerHTML = `<video class="media-video" src="${escapeAttr(url)}" controls autoplay playsinline></video>`;
+      } else {
+        bodyEl.innerHTML = `<iframe class="media-frame" src="${escapeAttr(url)}" title="${escapeAttr(item.name)}"></iframe>`;
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closePreviewModal() {
+      const modal = document.getElementById('previewModal');
+      const bodyEl = document.getElementById('previewBody');
+      bodyEl.innerHTML = '';
+      modal.classList.remove('open');
+    }
+
+    /* =====================================================================
+       4. ADMIN FOLDER SETUP & GOOGLE DRIVE ROUTING + FALLBACK
+       ===================================================================== */
+    function openSetupModal() {
+      document.getElementById('folderInput').value = appState.folderUrl || DEFAULT_DRIVE_URL;
+      document.getElementById('setupModal').classList.add('open');
+    }
+
+    function closeSetupModal() {
+      document.getElementById('setupModal').classList.remove('open');
+    }
+
+    function parseFolderId(input) {
+      const clean = (input || '').trim();
+      if (!clean) return DEFAULT_FOLDER_ID;
+      const folderMatch = clean.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+      if (folderMatch && folderMatch[1]) return folderMatch[1];
+      const idParamMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idParamMatch && idParamMatch[1]) return idParamMatch[1];
+      return clean;
+    }
+
+    function saveFolderSetup(event) {
+      event.preventDefault();
+      const rawInput = document.getElementById('folderInput').value.trim();
+      const folderId = parseFolderId(rawInput);
+      const folderUrl = rawInput.startsWith('http')
+        ? rawInput
+        : `https://drive.google.com/drive/folders/${folderId}?usp=drive_link`;
+
+      appState.folderId = folderId;
+      appState.folderUrl = folderUrl;
+
+      localStorage.setItem(STORAGE_KEYS.folderId, folderId);
+      localStorage.setItem(STORAGE_KEYS.folderUrl, folderUrl);
+
+      syncHeaderDriveLink();
+      closeSetupModal();
+      syncDriveFiles(true);
+    }
+
+    function detectSubjectFromText(text) {
+      const upper = String(text || '').toUpperCase().trim();
+      if (!upper) return null;
+
+      for (const subject of SUBJECTS) {
+        if (
+          upper === subject ||
+          upper.startsWith(subject + '_') ||
+          upper.startsWith(subject + '-') ||
+          upper.startsWith(subject + ' ') ||
+          upper.startsWith(subject + '.') ||
+          upper.includes('/' + subject) ||
+          upper.includes(subject + '/')
+        ) {
+          return subject;
+        }
+      }
+      return null;
+    }
+
+    function classifyMedia(mimeType, fileName) {
+      const mime = String(mimeType || '').toLowerCase();
+      const lower = String(fileName || '').toLowerCase();
+
+      if (mime.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(lower)) {
+        return { mediaKind: 'image', typeLabel: 'IMAGE' };
+      }
+      if (mime.startsWith('video/') || /\.(mp4|mov|webm|mkv|avi|m4v)$/.test(lower)) {
+        return { mediaKind: 'video', typeLabel: 'VIDEO' };
+      }
+      if (mime === 'application/pdf' || lower.endsWith('.pdf')) {
+        return { mediaKind: 'pdf', typeLabel: 'PDF' };
+      }
+      return { mediaKind: 'file', typeLabel: 'FILE' };
+    }
+
+    function formatSize(bytes) {
+      const size = Number(bytes);
+      if (!Number.isFinite(size) || size <= 0) return '';
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+      return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+    }
+
+    async function syncDriveFiles(showErrorBanner = true) {
+      appState.isSyncing = true;
+      setNotice('');
+      renderSubjectFiles();
+
+      const nextMap = {
+        PHYSICS: [],
+        MATH: [],
+        KURDISH: [],
+        ENGLISH: [],
+        CHEMISTRY: [],
+        BIOLOGY: [],
+        ARABIC: []
+      };
+
+      const seenFileIds = new Set();
+      const unmatchedFiles = [];
+
+      try {
+        // 1. List immediate subfolders inside the root 12th grade folder
+        const subQuery = encodeURIComponent(
+          `'${appState.folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const subUrl = `https://www.googleapis.com/drive/v3/files?q=${subQuery}&fields=files(id,name)&pageSize=100&key=${encodeURIComponent(EMBEDDED_API_KEY)}`;
+        const subRes = await fetch(subUrl);
+        if (!subRes.ok) {
+          throw new Error(`Folder lookup failed (${subRes.status})`);
+        }
+        const subData = await subRes.json();
+        const subfolders = subData.files || [];
+
+        const subfolderToSubject = {};
+        const foldersToScan = [appState.folderId];
+
+        subfolders.forEach((folder) => {
+          const matchedSubject = detectSubjectFromText(folder.name);
+          if (matchedSubject) {
+            subfolderToSubject[folder.id] = matchedSubject;
+          }
+          foldersToScan.push(folder.id);
+        });
+
+        // 2. Scan files in root folder and subfolders
+        for (const parentId of foldersToScan) {
+          const fileQuery = encodeURIComponent(
+            `'${parentId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+          );
+          const fileUrl = `https://www.googleapis.com/drive/v3/files?q=${fileQuery}&fields=files(id,name,mimeType,size,webViewLink,webContentLink)&pageSize=200&key=${encodeURIComponent(EMBEDDED_API_KEY)}`;
+          const fileRes = await fetch(fileUrl);
+          if (!fileRes.ok) {
+            throw new Error(`File lookup failed (${fileRes.status})`);
+          }
+          const fileData = await fileRes.json();
+          const files = fileData.files || [];
+
+          const mappedFolderSubject = subfolderToSubject[parentId] || null;
+
+          files.forEach((file) => {
+            if (!file.id || seenFileIds.has(file.id)) return;
+            seenFileIds.add(file.id);
+
+            const { mediaKind, typeLabel } = classifyMedia(file.mimeType, file.name);
+            const previewUrl =
+              mediaKind === 'pdf'
+                ? `https://drive.google.com/file/d/${file.id}/preview`
+                : file.webViewLink || `https://drive.google.com/file/d/${file.id}/view`;
+
+            const downloadUrl =
+              file.webContentLink ||
+              `https://drive.google.com/uc?export=download&id=${file.id}`;
+
+            const entry = {
+              id: file.id,
+              name: file.name,
+              mediaKind,
+              typeLabel,
+              sizeLabel: formatSize(file.size),
+              previewUrl,
+              downloadUrl,
+              isFallback: false
+            };
+
+            const routedSubject = mappedFolderSubject || detectSubjectFromText(file.name);
+            if (routedSubject && nextMap[routedSubject]) {
+              nextMap[routedSubject].push(entry);
+            } else {
+              unmatchedFiles.push({ ...entry, isFallback: true });
+            }
+          });
+        }
+
+        // 3. Fallback display: if a file has no matching subfolder or prefix, show it in tabs that are still empty
+        if (unmatchedFiles.length > 0) {
+          SUBJECTS.forEach((subject) => {
+            if (nextMap[subject].length === 0) {
+              nextMap[subject] = unmatchedFiles.map((f) => ({ ...f }));
+            }
+          });
+        }
+
+        appState.itemsBySubject = nextMap;
+        setNotice('');
+      } catch (err) {
+        console.error('Drive sync error:', err);
+        if (showErrorBanner) {
+          setNotice(
+            'Unable to load files from Google Drive right now. Ensure the folder is shared as "Anyone with the link (Viewer)" and the Google Drive API is enabled.',
+            true
+          );
+        }
+      } finally {
+        appState.isSyncing = false;
+        renderSubjectFiles();
+      }
+    }
+
+    /* =====================================================================
+       5. HTML ESCAPING HELPERS
+       ===================================================================== */
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+  </script>
+</body>
+</html>
